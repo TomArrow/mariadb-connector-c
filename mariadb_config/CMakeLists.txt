@@ -58,10 +58,12 @@ ENDIF()
 
 # Installation
 #
-INSTALL(TARGETS mariadb_config
-        DESTINATION "${INSTALL_BINDIR}"
-        COMPONENT Development)
+if(NOT IGNORE_PACKAGING)
+	INSTALL(TARGETS mariadb_config
+			DESTINATION "${INSTALL_BINDIR}"
+			COMPONENT Development)
 
-INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/libmariadb.pc
-        DESTINATION "${INSTALL_PCDIR}"
-        COMPONENT Development)
+	INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/libmariadb.pc
+			DESTINATION "${INSTALL_PCDIR}"
+			COMPONENT Development)
+endif()

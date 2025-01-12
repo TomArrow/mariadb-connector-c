@@ -500,27 +500,30 @@ IF(NOT WIN32)
   SET_TARGET_PROPERTIES(mariadbclient PROPERTIES OUTPUT_NAME "${LIBMARIADB_STATIC_NAME}")
 ENDIF()
 
-INSTALL(TARGETS mariadbclient
-          COMPONENT Development
-          DESTINATION ${INSTALL_LIBDIR})
-IF(WIN32)
-INSTALL(TARGETS libmariadb
-        COMPONENT SharedLibraries
-        DESTINATION ${INSTALL_LIBDIR})
-ELSE()
-# in cmake 3.12+ we can use
-#INSTALL(TARGETS libmariadb LIBRARY DESTINATION ${INSTALL_LIBDIR}
-#        COMPONENT SharedLibraries NAMELINK_COMPONENT Development)
-# but as long as we build on CentOS 7 with its cmake 2.8.12.2 we have to use
-INSTALL(TARGETS libmariadb LIBRARY DESTINATION ${INSTALL_LIBDIR}
-        COMPONENT SharedLibraries NAMELINK_SKIP)
-INSTALL(TARGETS libmariadb LIBRARY DESTINATION ${INSTALL_LIBDIR}
-        COMPONENT Development NAMELINK_ONLY)
-ENDIF()
+if(NOT IGNORE_PACKAGING)
+	INSTALL(TARGETS mariadbclient
+			  COMPONENT Development
+			  DESTINATION ${INSTALL_LIBDIR})
+	IF(WIN32)
+	INSTALL(TARGETS libmariadb
+			COMPONENT SharedLibraries
+			DESTINATION ${INSTALL_LIBDIR})
+	ELSE()
+	# in cmake 3.12+ we can use
+	#INSTALL(TARGETS libmariadb LIBRARY DESTINATION ${INSTALL_LIBDIR}
+	#        COMPONENT SharedLibraries NAMELINK_COMPONENT Development)
+	# but as long as we build on CentOS 7 with its cmake 2.8.12.2 we have to use
+	INSTALL(TARGETS libmariadb LIBRARY DESTINATION ${INSTALL_LIBDIR}
+			COMPONENT SharedLibraries NAMELINK_SKIP)
+	INSTALL(TARGETS libmariadb LIBRARY DESTINATION ${INSTALL_LIBDIR}
+			COMPONENT Development NAMELINK_ONLY)
+	ENDIF()
+	
+	IF(MSVC)
+	   # On Windows, install PDB
+	   INSTALL(FILES $<TARGET_PDB_FILE:libmariadb> DESTINATION "${INSTALL_LIBDIR}"
+			   CONFIGURATIONS Debug RelWithDebInfo
+			   COMPONENT Development)
+	ENDIF()
+endif()
 
-IF(MSVC)
-   # On Windows, install PDB
-   INSTALL(FILES $<TARGET_PDB_FILE:libmariadb> DESTINATION "${INSTALL_LIBDIR}"
-           CONFIGURATIONS Debug RelWithDebInfo
-           COMPONENT Development)
-ENDIF()

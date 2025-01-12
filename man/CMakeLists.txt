@@ -120,4 +120,6 @@ mysql_thread_init.3
 mysql_use_result.3
 mysql_warning_count.3)
 
-INSTALL(FILES ${CC_MAN_PAGES_3} DESTINATION ${INSTALL_MANDIR}/man3 COMPONENT ManPagesDevelopment)
+if(NOT IGNORE_PACKAGING)
+	INSTALL(FILES ${CC_MAN_PAGES_3} DESTINATION ${INSTALL_MANDIR}/man3 COMPONENT ManPagesDevelopment)
+endif()
